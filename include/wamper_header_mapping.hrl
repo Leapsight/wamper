@@ -26,7 +26,7 @@
 %%%-------------------------------------------------------------------
 
 -define(ERROR_MAPPING, [
-  {},
+  {}
   %% {goodbye_and_out, <<"wamp.error.goodbye_and_out">>},
   %% {authorization_failed, <<"wamp.error.authorization_failed">>},
   %% {canceled, <<"wamp.error.canceled">>},
