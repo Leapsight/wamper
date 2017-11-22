@@ -138,6 +138,10 @@ to_wamp(noreply) ->
 to_wamp(shutdown) ->
   shutdown.
 
+to_erl({ping, _} = Ping) ->
+  Ping;
+to_erl({pong, _} = Ping) ->
+  Ping;
 to_erl([?HELLO, Realm, Details]) ->
   true = wamper_validator:is_valid_uri(Realm),
   true = wamper_validator:is_valid_dict(Details),
