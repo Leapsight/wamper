@@ -147,5 +147,9 @@ to_erl_reverse(List) ->
 
 %% @private
 to_erl_reverse([], List) -> List;
+to_erl_reverse([{ping, _} = H| T], Messages) ->
+  to_erl_reverse(T, [H | Messages]);
+to_erl_reverse([{pong, _} = H| T], Messages) ->
+  to_erl_reverse(T, [H | Messages]);
 to_erl_reverse([H | T], Messages) ->
   to_erl_reverse(T, [wamper_converter:to_erl(H) | Messages]).
