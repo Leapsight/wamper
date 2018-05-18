@@ -34,10 +34,7 @@ deserialize(Buffer, Encoding) ->
   end.
 
 serialize(Erwa, Enc) ->
-  WAMP = case {lists:member(Enc, [erlbin, raw_erlbin]), is_tuple(Erwa)} of
-           {false, true} -> wamper_converter:to_wamp(Erwa);
-           _ -> Erwa
-         end,
+  WAMP = wamper_converter:to_wamp(Erwa),
   serialize_message(WAMP, Enc).
 
 
@@ -45,7 +42,7 @@ serialize(Erwa, Enc) ->
 -spec deserialize_text(Buffer :: binary(), Messages :: list(), Encoding :: atom()) ->
   {[Message :: term()], NewBuffer :: binary()}.
 deserialize_text(Buffer, Messages, erlbin) ->
-  Msg = binary_to_term(Buffer),
+  Msg = wamper_converter:to_erl(binary_to_term(Buffer)),
   true = wamper_validator:is_valid_message(Msg),
   {[Msg | Messages], <<"">>};
 deserialize_text(Buffer, Messages, msgpack) ->
@@ -77,7 +74,7 @@ deserialize_binary(<<LenType:32/unsigned-integer-big, Data/binary>> = Buffer, Me
       <<EncMsg:Len/binary, NewBuffer/binary>> = Data,
       {ok, Msg} = case Enc of
                     raw_erlbin ->
-                      DecMsg = binary_to_term(EncMsg),
+                      DecMsg = wamper_converter:to_erl(binary_to_term(EncMsg)),
                       true = wamper_validator:is_valid_message(DecMsg),
                       {ok, DecMsg};
                     raw_json ->
