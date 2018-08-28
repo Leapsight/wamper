@@ -31,25 +31,25 @@
 -include_lib("eunit/include/eunit.hrl").
 
 hello_json_test() ->
-  M = [?HELLO, <<"realm1">>, #{}],
+  M = {hello, <<"realm1">>, #{}},
   S = wamper_protocol:serialize(M, json),
   D = wamper_protocol:deserialize(S, json),
   D = {[{hello, <<"realm1">>, #{}}], <<"">>}.
 
 hello_json_batched_test() ->
-  M = [?HELLO, <<"realm1">>, #{}],
+  M = {hello, <<"realm1">>, #{}},
   S = wamper_protocol:serialize(M, json_batched),
   D = wamper_protocol:deserialize(S, json_batched),
   D = {[{hello, <<"realm1">>, #{}}], <<"">>}.
 
 hello_msgpack_test() ->
-  M = [?HELLO, <<"realm1">>, #{}],
+  M = {hello, <<"realm1">>, #{}},
   S = wamper_protocol:serialize(M, msgpack),
   D = wamper_protocol:deserialize(S, msgpack),
   D = {[{hello, <<"realm1">>, #{}}], <<"">>}.
 
 hello_msgpack_batched_test() ->
-  M = [?HELLO, <<"realm1">>, #{}],
+  M = {hello, <<"realm1">>, #{}},
   S = wamper_protocol:serialize(M, msgpack_batched),
   D = wamper_protocol:deserialize(S, msgpack_batched),
   D = {[{hello, <<"realm1">>, #{}}], <<"">>}.

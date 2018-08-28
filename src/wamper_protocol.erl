@@ -46,7 +46,7 @@ deserialize_text(Buffer, Messages, erlbin) ->
   true = wamper_validator:is_valid_message(Msg),
   {[Msg | Messages], <<"">>};
 deserialize_text(Buffer, Messages, msgpack) ->
-  case msgpack:unpack_stream(Buffer, []) of
+  case msgpack:unpack_stream(Buffer, [{unpack_str, as_binary}]) of
     {error, incomplete} ->
       {to_erl_reverse(Messages), Buffer};
     {error, Reason} ->
@@ -80,7 +80,7 @@ deserialize_binary(<<LenType:32/unsigned-integer-big, Data/binary>> = Buffer, Me
                     raw_json ->
                       {ok, jsx:decode(EncMsg, [return_maps])};
                     _ ->
-                      msgpack:unpack(EncMsg, [])
+                      msgpack:unpack(EncMsg, [{map_format, map}, {unpack_str, as_binary}])
                   end,
       deserialize_binary(NewBuffer, [Msg | Messages], Enc);
     {1, true} ->      %Ping
@@ -103,7 +103,7 @@ deserialize_binary(Buffer, Messages, Enc) ->
 
 %% @private
 serialize_message(Msg, msgpack) ->
-  case msgpack:pack(Msg, []) of
+  case msgpack:pack(Msg, [{allow_atom, pack}, {pack_str, from_binary}, {map_format, map}]) of
     {error, Reason} ->
       error(wamper_msgpack, [Reason]);
     M ->
@@ -122,7 +122,7 @@ serialize_message(Message, raw_erlbin) ->
   Enc = term_to_binary(Message),
   add_binary_frame(Enc);
 serialize_message(Message, raw_msgpack) ->
-    Enc = case msgpack:pack(Message, [{allow_atom, pack}]) of
+    Enc = case msgpack:pack(Message, [{allow_atom, pack}, {pack_str, from_binary}, {map_format, map}]) of
           {error, Reason} ->
             error(Reason);
           Msg ->
