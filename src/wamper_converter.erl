@@ -362,6 +362,7 @@ convert_error(Direction, Error) ->
 convert_dict(Type, PropList, Direction) when is_list(PropList) ->
   Map = maps:from_list(PropList),
   convert_dict(Type, Map, Direction);
+
 convert_dict(Type, Map, Direction) ->
   Mapping = case Type of
               hello -> ?HELLO_MAPPING;

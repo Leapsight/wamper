@@ -51,7 +51,8 @@ create_wampcra_challenge(AuthProvider, AuthId, Authrole, Session) ->
   {{Year, Month, Day}, {Hour, Minute, Seconds}} = calendar:now_to_universal_time(Now),
   Timestamp = list_to_binary(
     io_lib:format("~.10B-~2.10.0B-~2.10.0BT~2.10.0B:~2.10.0B:~2.10.0B.000Z", [Year, Month, Day, Hour, Minute, Seconds])),
-  Challenge = jsx:encode([{<<"nonce">>, nonce()}, {<<"authprovider">>, AuthProvider},
+  Challenge = jsone:encode(
+    [{<<"nonce">>, nonce()}, {<<"authprovider">>, AuthProvider},
     {<<"authid">>, AuthId}, {<<"timestamp">>, Timestamp},
     {<<"authrole">>, Authrole}, {<<"authmethod">>, <<"wampcra">>},
     {<<"session">>, Session}]),

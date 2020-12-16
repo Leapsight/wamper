@@ -57,10 +57,10 @@ deserialize_text(Buffer, Messages, msgpack) ->
 deserialize_text(Buffer, Messages, json) ->
   %% is it possible to check the data here ?
   %% length and stuff, yet should not be needed
-  {[wamper_converter:to_erl(jsx:decode(Buffer, [return_maps])) | Messages], <<"">>};
+  {[wamper_converter:to_erl(jsone:decode(Buffer, [{object_format, map}, undefined_as_null])) | Messages], <<"">>};
 deserialize_text(Buffer, _Messages, json_batched) ->
   Wamps = binary:split(Buffer, [?JSONB_SEPARATOR], [global, trim]),
-  {to_erl_reverse(lists:foldl(fun(M, List) -> [jsx:decode(M, [return_maps]) | List] end, [], Wamps)), <<"">>};
+  {to_erl_reverse(lists:foldl(fun(M, List) -> [jsone:decode(M, [{object_format, map}, undefined_as_null]) | List] end, [], Wamps)), <<"">>};
 deserialize_text(Buffer, Messages, _) ->
   {to_erl_reverse(Messages), Buffer}.
 
@@ -78,7 +78,7 @@ deserialize_binary(<<LenType:32/unsigned-integer-big, Data/binary>> = Buffer, Me
                       true = wamper_validator:is_valid_message(DecMsg),
                       {ok, DecMsg};
                     raw_json ->
-                      {ok, jsx:decode(EncMsg, [return_maps])};
+                      {ok, jsone:decode(EncMsg, [{object_format, map}, undefined_as_null])};
                     _ ->
                       msgpack:unpack(EncMsg, [{map_format, map}, {unpack_str, as_binary}])
                   end,
@@ -114,9 +114,9 @@ serialize_message(Msg, erlbin) ->
 serialize_message(Msg, msgpack_batched) ->
   serialize(Msg, raw_msgpack);
 serialize_message(Msg, json) ->
-  jsx:encode(Msg);
+  jsone:encode(Msg, [undefined_as_null]);
 serialize_message(Msg, json_batched) ->
-  Enc = jsx:encode(Msg),
+  Enc = jsone:encode(Msg, [undefined_as_null]),
   <<Enc/binary, ?JSONB_SEPARATOR/binary>>;
 serialize_message(Message, raw_erlbin) ->
   Enc = term_to_binary(Message),
@@ -130,7 +130,7 @@ serialize_message(Message, raw_msgpack) ->
         end,
   add_binary_frame(Enc);
 serialize_message(Message, raw_json) ->
-  Enc = jsx:encode(Message),
+  Enc = jsone:encode(Message, [undefined_as_null]),
   add_binary_frame(Enc).
 
 %% @private

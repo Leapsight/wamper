@@ -29,7 +29,7 @@
 	{applications, [
 		kernel,
 		stdlib,
-    jsx,
+    jsone,
     msgpack,
     pbkdf2,
     crypto
