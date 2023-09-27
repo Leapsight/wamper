@@ -301,6 +301,9 @@ dict_to_erl(Dict) ->
   convert_dict(default, Dict, to_erl).
 
 %% @private
+dict_to_wamp(undefined) ->
+  dict_to_wamp(#{});
+
 dict_to_wamp(Dict) ->
   convert_dict(default, Dict, to_wamp).
 
